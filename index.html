@@ -149,14 +149,40 @@ const firebaseConfig = {
             });
         };
 
-        window.switchTab = (type) => {
-            const pList = document.getElementById('pendingList');
-            const sList = document.getElementById('soldList');
-            if(pList && sList) {
-                pList.classList.toggle('hidden', type === 'sold');
-                sList.classList.toggle('hidden', type === 'pending');
-            }
-        };
+       window.switchTab = (type) => {
+    const pList = document.getElementById('pendingList');
+    const sList = document.getElementById('soldList');
+    const pTab = document.getElementById('tabPending');
+    const sTab = document.getElementById('tabSold');
+
+    if (!pList || !sList || !pTab || !sTab) return;
+
+    if (type === 'pending') {
+        // Mostrar lista de pendientes
+        pList.classList.remove('hidden');
+        sList.classList.add('hidden');
+        
+        // Estilo del botón Pendientes (Activo)
+        pTab.classList.add('border-yellow-500', 'text-white', 'bg-neutral-900/50');
+        pTab.classList.remove('border-transparent', 'text-neutral-500');
+        
+        // Estilo del botón Vendidos (Inactivo)
+        sTab.classList.add('border-transparent', 'text-neutral-500');
+        sTab.classList.remove('border-yellow-500', 'text-white', 'bg-neutral-900/50');
+    } else {
+        // Mostrar lista de vendidos
+        sList.classList.remove('hidden');
+        pList.classList.add('hidden');
+        
+        // Estilo del botón Vendidos (Activo)
+        sTab.classList.add('border-yellow-500', 'text-white', 'bg-neutral-900/50');
+        sTab.classList.remove('border-transparent', 'text-neutral-500');
+        
+        // Estilo del botón Pendientes (Inactivo)
+        pTab.classList.add('border-transparent', 'text-neutral-500');
+        pTab.classList.remove('border-yellow-500', 'text-white', 'bg-neutral-900/50');
+    }
+};
 
         // --- RENDERIZADO ---
         window.processAndRenderDrops = (allDrops) => {
