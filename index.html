@@ -9,27 +9,23 @@
         body { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #171717; }
-        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 3px; }
         @keyframes slide-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .animate-slide { animation: slide-in 0.2s ease-out; }
-        
-        /* Clases de estado para los botones de pestañas */
-        .tab-active { border-color: #10b981 !important; color: white !important; background-color: rgba(23, 23, 23, 0.5) !important; }
-        .tab-inactive { border-color: transparent !important; color: #737373 !important; background-color: transparent !important; }
     </style>
 </head>
-<body class="min-h-screen bg-neutral-950 text-neutral-200 p-4 text-sm selection:bg-emerald-500 selection:text-black">
+<body class="min-h-screen bg-neutral-950 text-neutral-200 p-4 text-sm selection:bg-yellow-500 selection:text-black">
     <div class="max-w-7xl mx-auto">
         <header class="mb-6 border-b border-neutral-800 pb-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-2 h-8 bg-emerald-500"></div> 
+                <div class="w-2 h-8 bg-yellow-500"></div> 
                 <div>
-                    <h1 class="text-2xl font-bold text-white tracking-tight uppercase">SOULWAR <span class="text-emerald-500">TRACKER</span></h1>
+                    <h1 class="text-2xl font-bold text-white tracking-tight uppercase">SOULWAR <span class="text-yellow-500">TRACKER</span></h1>
                     <p class="text-xs text-neutral-400 font-medium uppercase tracking-widest italic">Drops pt estrella</p>
                 </div>
             </div>
             <button onclick="document.getElementById('playerModal').classList.remove('hidden')" 
-                    class="bg-neutral-800 hover:bg-neutral-700 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded font-bold text-xs uppercase transition-colors flex items-center gap-2">
+                    class="bg-neutral-800 hover:bg-neutral-700 text-yellow-500 border border-yellow-500/30 px-4 py-2 rounded font-bold text-xs uppercase transition-colors flex items-center gap-2">
                 <span>⚙️</span> Gestionar Equipo
             </button>
         </header>
@@ -37,18 +33,18 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div class="lg:col-span-4">
                 <section class="bg-neutral-900 p-6 rounded border border-neutral-800 sticky top-4 shadow-lg shadow-black/50">
-                    <h2 class="text-emerald-500 font-bold mb-4 uppercase text-xs tracking-wider border-b border-neutral-800 pb-2">Nuevo Registro</h2>
+                    <h2 class="text-yellow-500 font-bold mb-4 uppercase text-xs tracking-wider border-b border-neutral-800 pb-2">Nuevo Registro</h2>
                     <div class="space-y-5">
                         <div>
                             <label class="block text-xs font-bold text-neutral-400 mb-1">NOMBRE DEL ITEM</label>
-                            <input type="text" id="itemInput" placeholder="Ej: Soultainter..." class="w-full bg-black text-white p-3 rounded border border-neutral-700 focus:border-emerald-500 outline-none font-bold">
+                            <input type="text" id="itemInput" placeholder="Ej: Soultainter..." class="w-full bg-black text-white p-3 rounded border border-neutral-700 focus:border-yellow-500 outline-none font-bold">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-neutral-400 mb-2">PARTICIPANTES DEL DROP</label>
                             <div id="formPlayerList" class="flex flex-col gap-1 bg-black p-2 rounded border border-neutral-700 max-h-[300px] overflow-y-auto">
                                 </div>
                         </div>
-                        <button onclick="window.registerDrop()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-black font-bold py-3 rounded uppercase tracking-wide transition-all active:scale-[0.98]">
+                        <button onclick="window.registerDrop()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded uppercase tracking-wide transition-all active:scale-[0.98]">
                             Registrar Drop
                         </button>
                     </div>
@@ -57,8 +53,8 @@
 
             <div class="lg:col-span-8">
                 <div class="flex gap-1 mb-4 border-b border-neutral-800">
-                    <button onclick="window.switchTab('pending')" id="tabPending" class="py-2 px-6 font-bold text-xs uppercase border-b-2 tab-active transition-all">Pendientes</button>
-                    <button onclick="window.switchTab('sold')" id="tabSold" class="py-2 px-6 font-bold text-xs uppercase border-b-2 tab-inactive transition-all">Vendidos (Historial)</button>
+                    <button onclick="window.switchTab('pending')" id="tabPending" class="py-2 px-6 font-bold text-xs uppercase border-b-2 border-yellow-500 text-white bg-neutral-900/50">Pendientes</button>
+                    <button onclick="window.switchTab('sold')" id="tabSold" class="py-2 px-6 font-bold text-xs uppercase border-b-2 border-transparent text-neutral-500">Vendidos (Historial)</button>
                 </div>
                 <div class="grid grid-cols-12 gap-2 px-4 py-2 text-[10px] font-bold text-neutral-500 uppercase tracking-wider bg-neutral-900/50 rounded-t border-b border-neutral-800">
                     <div class="col-span-4 md:col-span-3">Item / Fecha</div>
@@ -72,14 +68,14 @@
     </div>
 
     <div id="playerModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-        <div class="bg-neutral-900 w-full max-w-md p-6 rounded border border-emerald-500/20 shadow-2xl">
+        <div class="bg-neutral-900 w-full max-w-md p-6 rounded border border-yellow-500/20 shadow-2xl">
             <div class="flex justify-between items-center mb-6 border-b border-neutral-800 pb-4">
-                <h3 class="text-emerald-500 font-bold uppercase tracking-wider">Miembros de la PT</h3>
+                <h3 class="text-yellow-500 font-bold uppercase tracking-wider">Miembros de la PT</h3>
                 <button onclick="document.getElementById('playerModal').classList.add('hidden')" class="text-neutral-500 hover:text-white text-xl">&times;</button>
             </div>
             <div class="flex gap-2 mb-6">
                 <input type="text" id="newPlayerName" placeholder="Nuevo Nick..." class="flex-1 bg-black text-white p-2 rounded border border-neutral-700 outline-none">
-                <button onclick="window.addPlayer()" class="bg-emerald-600 hover:bg-emerald-500 text-black px-4 rounded font-bold text-xs uppercase">Crear</button>
+                <button onclick="window.addPlayer()" class="bg-yellow-600 hover:bg-yellow-500 text-black px-4 rounded font-bold text-xs uppercase">Crear</button>
             </div>
             <div id="masterPlayerList" class="space-y-2 max-h-[400px] overflow-y-auto pr-2"></div>
         </div>
@@ -89,4 +85,156 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig =
+    const firebaseConfig = {
+      apiKey: "AIzaSyAda8n-auSFl3j_VUYOtPla4snTDzKk8lU",
+      authDomain: "drops-team-tibia.firebaseapp.com",
+      projectId: "drops-team-tibia",
+      storageBucket: "drops-team-tibia.firebasestorage.app",
+      messagingSenderId: "953384004491",
+      appId: "1:953384004491:web:1b9d9b4e1f2f9c59d95d8e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const MASTER_PASS = "1234";
+
+    document.addEventListener('DOMContentLoaded', () => {
+        window.addPlayer = async () => {
+            const name = document.getElementById('newPlayerName').value.trim();
+            if (name) { await addDoc(collection(db, "players"), { name }); document.getElementById('newPlayerName').value = ''; }
+        };
+
+        window.removePlayer = async (id) => {
+            if(confirm("¿Deseas eliminar a este jugador?") && prompt("Contraseña:") === MASTER_PASS) await deleteDoc(doc(db, "players", id));
+        };
+
+        window.registerDrop = async () => {
+            const item = document.getElementById('itemInput').value.trim();
+            const selPlayers = Array.from(document.querySelectorAll('#formPlayerList input:checked')).map(cb => cb.value);
+            if (!item || selPlayers.length === 0) return alert("¡Ingresa el item y selecciona jugadores!");
+            await addDoc(collection(db, "drops"), {
+                item, players: selPlayers, dropDate: new Date().toLocaleDateString('es-ES'),
+                timestamp: Date.now(), sold: false, price: 0
+            });
+            document.getElementById('itemInput').value = '';
+        };
+
+        window.markAsSold = async (id) => {
+            const val = prompt("Valor en KKs:");
+            if (val && !isNaN(val)) {
+                await updateDoc(doc(db, "drops", id), { 
+                    sold: true, price: Number(val), 
+                    saleDate: new Date().toLocaleDateString('es-ES'),
+                    saleTimestamp: Date.now() 
+                });
+            }
+        };
+
+        window.deleteDrop = async (id) => {
+            if(prompt("Contraseña:") === MASTER_PASS) await deleteDoc(doc(db, "drops", id));
+        };
+
+        window.copyTransfer = (text, btnId) => {
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById(btnId);
+                if(btn) btn.innerText = '¡OK!';
+                setTimeout(() => { if(btn) btn.innerText = 'COPY' }, 1500);
+            });
+        };
+
+       window.switchTab = (type) => {
+            const pList = document.getElementById('pendingList');
+            const sList = document.getElementById('soldList');
+            const pTab = document.getElementById('tabPending');
+            const sTab = document.getElementById('tabSold');
+            if (!pList || !sList || !pTab || !sTab) return;
+
+            if (type === 'pending') {
+                pList.classList.remove('hidden'); sList.classList.add('hidden');
+                pTab.classList.add('border-yellow-500', 'text-white', 'bg-neutral-900/50');
+                pTab.classList.remove('border-transparent', 'text-neutral-500');
+                sTab.classList.add('border-transparent', 'text-neutral-500');
+                sTab.classList.remove('border-yellow-500', 'text-white', 'bg-neutral-900/50');
+            } else {
+                sList.classList.remove('hidden'); pList.classList.add('hidden');
+                sTab.classList.add('border-yellow-500', 'text-white', 'bg-neutral-900/50');
+                sTab.classList.remove('border-transparent', 'text-neutral-500');
+                pTab.classList.add('border-transparent', 'text-neutral-500');
+                pTab.classList.remove('border-yellow-500', 'text-white', 'bg-neutral-900/50');
+            }
+        };
+
+        window.processAndRenderDrops = (allDrops) => {
+            const pendingList = document.getElementById('pendingList');
+            const soldList = document.getElementById('soldList');
+            if (!pendingList || !soldList) return;
+            pendingList.innerHTML = ''; soldList.innerHTML = '';
+            
+            const pending = allDrops.filter(d => !d.sold);
+            const sold = allDrops.filter(d => d.sold).sort((a,b) => (b.saleTimestamp || 0) - (a.saleTimestamp || 0));
+
+            pending.forEach(d => renderRow(d, pendingList, false));
+            sold.forEach(d => renderRow(d, soldList, true));
+        };
+
+        function renderRow(drop, container, isSold) {
+            const shareGold = isSold ? Math.floor((drop.price * 1000000) / drop.players.length) : 0;
+            const shareKk = isSold ? (drop.price / drop.players.length).toFixed(2) : 0;
+            
+            const html = `
+                <div class="bg-neutral-900 border border-neutral-800 p-5 rounded mb-2 group animate-slide shadow-inner">
+                    <div class="grid grid-cols-12 items-center gap-4">
+                        <div class="col-span-12 md:col-span-4">
+                            <div class="text-yellow-500 font-extrabold uppercase text-sm tracking-wide mb-1">${drop.item}</div>
+                            <div class="text-[11px] text-neutral-400 font-medium">${isSold ? 'Vendido el: ' + drop.saleDate : 'Registrado: ' + drop.dropDate}</div>
+                        </div>
+                        <div class="col-span-12 md:col-span-4">
+                            <div class="flex flex-wrap gap-1.5">
+                                ${drop.players.map(p => `<span class="bg-neutral-800 text-white px-2 py-0.5 rounded text-[11px] border border-neutral-700 font-semibold shadow-sm">${p}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="col-span-12 md:col-span-4 text-right flex flex-col items-end gap-2">
+                            ${!isSold ? 
+                                `<button onclick="window.markAsSold('${drop.id}')" class="bg-yellow-600 hover:bg-yellow-500 text-black px-4 py-1.5 rounded text-xs font-black uppercase transition-all shadow-lg">VENDER</button>
+                                 <button onclick="window.deleteDrop('${drop.id}')" class="text-[10px] text-neutral-500 hover:text-red-400 underline tracking-tight">eliminar registro</button>` : 
+                                `<div class="flex flex-col items-end">
+                                    <span class="text-green-400 font-black text-lg leading-none">${drop.price}kk</span>
+                                    <span class="text-[11px] text-white font-bold mt-1 bg-green-950/30 px-2 py-0.5 rounded border border-green-900/50">${shareKk}kk c/u</span>
+                                    <button onclick="window.deleteDrop('${drop.id}')" class="text-[10px] text-neutral-600 hover:text-red-500 mt-2 flex items-center gap-1">
+                                        <span>🗑️</span> Borrar del Historial
+                                    </button>
+                                 </div>`
+                            }
+                        </div>
+                    </div>
+                    ${isSold ? `<div class="mt-4 hidden group-hover:block border-t border-neutral-800 pt-3 text-left">
+                        <p class="text-[10px] text-yellow-500/70 mb-2 uppercase font-black tracking-widest">📋 Comandos de Bank Transfer</p>
+                        <div class="grid grid-cols-1 gap-1.5">
+                            ${drop.players.map((p, i) => {
+                                const cmd = `transfer ${shareGold} to ${p}`;
+                                const bId = `b-${drop.id}-${i}`;
+                                return `
+                                <div class="flex justify-between text-[12px] bg-black/50 p-2 rounded border border-neutral-800 items-center hover:border-neutral-600 transition-colors">
+                                    <span class="font-mono text-white font-medium">${cmd}</span>
+                                    <button id="${bId}" onclick="window.copyTransfer('${cmd}', '${bId}')" class="bg-neutral-800 hover:bg-yellow-600 hover:text-black text-yellow-500 font-bold px-3 py-1 rounded text-[10px] transition-all">COPY</button>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>` : ''}
+                </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        onSnapshot(collection(db, "players"), (s) => {
+            const p = s.docs.map(d => ({id:d.id, ...d.data()}));
+            document.getElementById('formPlayerList').innerHTML = p.map(player => `<label class="flex gap-2 p-1 items-center hover:bg-neutral-800 cursor-pointer"><input type="checkbox" value="${player.name}" class="accent-yellow-500"> <span class="text-xs text-white">${player.name}</span></label>`).join('');
+            document.getElementById('masterPlayerList').innerHTML = p.map(player => `<div class="flex justify-between bg-black p-2 mb-1 border border-neutral-800"><span class="text-white">${player.name}</span><button onclick="window.removePlayer('${player.id}')" class="text-red-500 font-bold">✕</button></div>`).join('');
+        });
+
+        onSnapshot(query(collection(db, "drops"), orderBy("timestamp", "desc")), (s) => {
+            window.processAndRenderDrops(s.docs.map(d => ({id:d.id, ...d.data()})));
+        });
+    });
+</script>
+</body>
+</html>
