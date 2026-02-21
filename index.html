@@ -145,25 +145,38 @@
         };
 
        window.switchTab = (type) => {
-            const pList = document.getElementById('pendingList');
-            const sList = document.getElementById('soldList');
-            const pTab = document.getElementById('tabPending');
-            const sTab = document.getElementById('tabSold');
-            if (!pList || !sList || !pTab || !sTab) return;
+    const pList = document.getElementById('pendingList');
+    const sList = document.getElementById('soldList');
+    const pTab = document.getElementById('tabPending');
+    const sTab = document.getElementById('tabSold');
+    
+    if (!pList || !sList || !pTab || !sTab) return;
 
-            if (type === 'pending') {
-                pList.classList.remove('hidden'); sList.classList.add('hidden');
-                pTab.classList.add('border-emerald-500', 'text-white', 'bg-emerald-900/10');
-                pTab.classList.remove('border-transparent', 'text-neutral-500');
-                sTab.classList.add('border-transparent', 'text-neutral-500');
-                sTab.classList.remove('border-emerald-500', 'text-white', 'bg-emerald-900/10');
-            } else {
-                sList.classList.remove('hidden'); pList.classList.add('hidden');
-                sTab.classList.add('border-emerald-500', 'text-white', 'bg-emerald-900/10');
-                sTab.classList.remove('border-transparent', 'text-neutral-500');
-                pTab.classList.add('border-transparent', 'text-neutral-500');
-                pTab.classList.remove('border-emerald-500', 'text-white', 'bg-emerald-900/10');
-            }
+    if (type === 'pending') {
+        // Mostrar lista de pendientes
+        pList.classList.remove('hidden');
+        sList.classList.add('hidden');
+        
+        // Estilo del botón Pendientes (Activo - Verde Illidan)
+        pTab.classList.add('border-emerald-500', 'text-white', 'bg-emerald-900/10');
+        pTab.classList.remove('border-transparent', 'text-neutral-500');
+        
+        // Estilo del botón Vendidos (Inactivo)
+        sTab.classList.add('border-transparent', 'text-neutral-500');
+        sTab.classList.remove('border-emerald-500', 'text-white', 'bg-emerald-900/10');
+    } else {
+        // Mostrar lista de vendidos
+        sList.classList.remove('hidden');
+        pList.classList.add('hidden');
+        
+        // Estilo del botón Vendidos (Activo - Verde Illidan)
+        sTab.classList.add('border-emerald-500', 'text-white', 'bg-emerald-900/10');
+        sTab.classList.remove('border-transparent', 'text-neutral-500');
+        
+        // Estilo del botón Pendientes (Inactivo)
+        pTab.classList.add('border-transparent', 'text-neutral-500');
+        pTab.classList.remove('border-emerald-500', 'text-white', 'bg-emerald-900/10');
+    }
         };
 
         window.processAndRenderDrops = (allDrops) => {
