@@ -1,209 +1,206 @@
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soulwar Tracker - Brositos Gold</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #171717; }
+        ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 3px; }
+        @keyframes slide-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide { animation: slide-in 0.2s ease-out; }
+    </style>
+</head>
+<body class="min-h-screen bg-neutral-950 text-neutral-200 p-4 text-sm selection:bg-yellow-500 selection:text-black">
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-6 border-b border-neutral-800 pb-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-2 h-8 bg-yellow-500"></div> 
+                <div>
+                    <h1 class="text-2xl font-bold text-white tracking-tight">SOULWAR <span class="text-yellow-500">TRACKER</span></h1>
+                    <p class="text-xs text-neutral-500 font-medium uppercase tracking-widest">PT Brositos • Financeiro</p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('playerModal').classList.remove('hidden')" 
+                    class="bg-neutral-800 hover:bg-neutral-700 text-yellow-500 border border-yellow-500/30 px-4 py-2 rounded font-bold text-xs uppercase transition-colors flex items-center gap-2">
+                <span>⚙️</span> Gerenciar Time
+            </button>
+        </header>
 
-    // 1. REEMPLAZA ESTO CON TUS DATOS DE FIREBASE
-    const firebaseConfig = {
-        apiKey: "AIzaSyAda8n-auSFl3j_VUYOtPla4snTDzKk8lU",
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-4">
+                <section class="bg-neutral-900 p-6 rounded border border-neutral-800 sticky top-4 shadow-lg shadow-black/50">
+                    <h2 class="text-yellow-500 font-bold mb-4 uppercase text-xs tracking-wider border-b border-neutral-800 pb-2">Novo Registro</h2>
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-400 mb-1">NOME DO ITEM</label>
+                            <input type="text" id="itemInput" placeholder="Ex: Soultainter..." class="w-full bg-black text-white p-3 rounded border border-neutral-700 focus:border-yellow-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-neutral-400 mb-2">PARTICIPANTES DO DROP</label>
+                            <div id="formPlayerList" class="flex flex-col gap-1 bg-black p-2 rounded border border-neutral-700 max-h-[300px] overflow-y-auto">
+                                </div>
+                        </div>
+                        <button onclick="window.registerDrop()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded uppercase tracking-wide transition-all active:scale-[0.98]">
+                            Registrar Drop
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <div class="lg:col-span-8">
+                <div class="flex gap-1 mb-4 border-b border-neutral-800">
+                    <button onclick="window.switchTab('pending')" id="tabPending" class="py-2 px-6 font-bold text-xs uppercase border-b-2 border-yellow-500 text-white bg-neutral-900/50">Pendentes</button>
+                    <button onclick="window.switchTab('sold')" id="tabSold" class="py-2 px-6 font-bold text-xs uppercase border-b-2 border-transparent text-neutral-500">Vendidos</button>
+                </div>
+                <div class="grid grid-cols-12 gap-2 px-4 py-2 text-[10px] font-bold text-neutral-500 uppercase tracking-wider bg-neutral-900/50 rounded-t border-b border-neutral-800">
+                    <div class="col-span-4 md:col-span-3">Item / Data</div>
+                    <div class="col-span-4 md:col-span-5">Equipe</div>
+                    <div class="col-span-4 md:col-span-4 text-right">Ações / Valor</div>
+                </div>
+                <div id="pendingList" class="space-y-1"></div>
+                <div id="soldList" class="hidden space-y-1"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="playerModal" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div class="bg-neutral-900 w-full max-w-md p-6 rounded border border-yellow-500/20 shadow-2xl">
+            <div class="flex justify-between items-center mb-6 border-b border-neutral-800 pb-4">
+                <h3 class="text-yellow-500 font-bold uppercase tracking-wider">Membros da PT</h3>
+                <button onclick="document.getElementById('playerModal').classList.add('hidden')" class="text-neutral-500 hover:text-white text-xl">&times;</button>
+            </div>
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="newPlayerName" placeholder="Novo Nick..." class="flex-1 bg-black text-white p-2 rounded border border-neutral-700 outline-none">
+                <button onclick="window.addPlayer()" class="bg-yellow-600 hover:bg-yellow-500 text-black px-4 rounded font-bold text-xs uppercase">Criar</button>
+            </div>
+            <div id="masterPlayerList" class="space-y-2 max-h-[400px] overflow-y-auto pr-2"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // 1. CONFIGURAÇÃO (Pon tus datos aquí)
+   const firebaseConfig = {
+  apiKey: "AIzaSyAda8n-auSFl3j_VUYOtPla4snTDzKk8lU",
   authDomain: "drops-team-tibia.firebaseapp.com",
   projectId: "drops-team-tibia",
   storageBucket: "drops-team-tibia.firebasestorage.app",
   messagingSenderId: "953384004491",
   appId: "1:953384004491:web:1b9d9b4e1f2f9c59d95d8e"
-    };
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const MASTER_PASS = "1234"; // Tu contraseña para borrar/editar
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const MASTER_PASS = "1234";
 
-    // --- LOGICA DE BASE DE DATOS (Exportada a window para que el HTML la vea) ---
+        // FUNCIONES DE BASE DE DATOS
+        window.addPlayer = async () => {
+            const name = document.getElementById('newPlayerName').value.trim();
+            if (name) { await addDoc(collection(db, "players"), { name }); document.getElementById('newPlayerName').value = ''; }
+        };
 
-    window.addPlayer = async () => {
-        const name = document.getElementById('newPlayerName').value.trim();
-        if (name) { 
-            await addDoc(collection(db, "players"), { name }); 
-            document.getElementById('newPlayerName').value = ''; 
-        }
-    };
+        window.removePlayer = async (id) => {
+            if(confirm("Deseja excluir?") && prompt("Senha:") === MASTER_PASS) await deleteDoc(doc(db, "players", id));
+        };
 
-    window.editPlayer = async (id, currentName) => {
-        const newName = prompt("Corregir nombre para:", currentName);
-        if(newName && newName !== currentName) {
-            if(prompt("Senha de Admin:") === MASTER_PASS) {
-                await updateDoc(doc(db, "players", id), { name: newName });
-            } else { alert("Senha incorreta."); }
-        }
-    };
-
-    window.removePlayer = async (id) => {
-        if(confirm("Tem certeza?") && prompt("Senha de Admin:") === MASTER_PASS) {
-            await deleteDoc(doc(db, "players", id));
-        }
-    };
-
-    window.registerDrop = async () => {
-        const item = document.getElementById('itemInput').value.trim();
-        const selPlayers = Array.from(document.querySelectorAll('#formPlayerList input:checked')).map(cb => cb.value);
-
-        if (!item) return alert("Digite o nome do item!");
-        if (selPlayers.length === 0) return alert("Selecione os participantes!");
-
-        await addDoc(collection(db, "drops"), {
-            item: item,
-            players: selPlayers,
-            dropDate: new Date().toLocaleDateString('pt-BR'),
-            timestamp: Date.now(),
-            sold: false,
-            price: 0
-        });
-
-        document.getElementById('itemInput').value = '';
-        document.querySelectorAll('#formPlayerList input:checked').forEach(cb => cb.checked = false);
-    };
-
-    window.markAsSold = async (id) => {
-        const val = prompt("Valor da venda em KKs (ex: 150):");
-        if (val && !isNaN(val)) {
-            await updateDoc(doc(db, "drops", id), { 
-                sold: true, 
-                price: Number(val),
-                saleDate: new Date().toLocaleDateString('pt-BR'),
-                saleTimestamp: Date.now()
+        window.registerDrop = async () => {
+            const item = document.getElementById('itemInput').value.trim();
+            const selPlayers = Array.from(document.querySelectorAll('#formPlayerList input:checked')).map(cb => cb.value);
+            if (!item || selPlayers.length === 0) return alert("Preencha item e jogadores!");
+            await addDoc(collection(db, "drops"), {
+                item, players: selPlayers, dropDate: new Date().toLocaleDateString('pt-BR'),
+                timestamp: Date.now(), sold: false, price: 0
             });
-        }
-    };
+            document.getElementById('itemInput').value = '';
+        };
 
-    window.deleteDrop = async (id) => {
-        if(prompt("Senha de Admin:") === MASTER_PASS) await deleteDoc(doc(db, "drops", id));
-    };
+        window.markAsSold = async (id) => {
+            const val = prompt("Valor em KKs:");
+            if (val && !isNaN(val)) {
+                await updateDoc(doc(db, "drops", id), { 
+                    sold: true, price: Number(val), 
+                    saleDate: new Date().toLocaleDateString('pt-BR'),
+                    saleTimestamp: Date.now() 
+                });
+            }
+        };
 
-    // --- ESCUCHA DE DATOS EN TIEMPO REAL ---
-    
-    onSnapshot(collection(db, "players"), (snapshot) => {
-        const players = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => a.name.localeCompare(b.name));
-        window.renderPlayers(players);
-    });
+        window.deleteDrop = async (id) => {
+            if(prompt("Senha:") === MASTER_PASS) await deleteDoc(doc(db, "drops", id));
+        };
 
-    onSnapshot(query(collection(db, "drops"), orderBy("timestamp", "desc")), (snapshot) => {
-        const allDrops = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        window.processAndRenderDrops(allDrops);
-    });
+        window.copyTransfer = (text, btnId) => {
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById(btnId);
+                btn.innerText = 'OK!';
+                setTimeout(() => btn.innerText = 'COPY', 1500);
+            });
+        };
 
-    // --- FUNCIONES VISUALES (Dentro del módulo para que usen la lógica anterior) ---
+        // RENDERIZADO (Protegido contra nulos)
+        window.processAndRenderDrops = (allDrops) => {
+            const pendingList = document.getElementById('pendingList');
+            const soldList = document.getElementById('soldList');
+            if (!pendingList || !soldList) return;
 
-    window.copyTransfer = (text, btnId) => {
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.getElementById(btnId);
-            btn.innerHTML = 'COPIADO';
-            btn.classList.add('text-green-400');
-            setTimeout(() => { 
-                btn.innerHTML = 'COPY'; 
-                btn.classList.remove('text-green-400');
-            }, 1500);
-        });
-    };
+            pendingList.innerHTML = ''; soldList.innerHTML = '';
+            const pending = allDrops.filter(d => !d.sold);
+            const sold = allDrops.filter(d => d.sold).sort((a,b) => b.saleTimestamp - a.saleTimestamp);
 
-    window.renderPlayers = (players) => {
-        const formList = document.getElementById('formPlayerList');
-        const masterList = document.getElementById('masterPlayerList');
-        
-        formList.innerHTML = players.map(p => `
-            <label class="flex items-center gap-3 p-2 hover:bg-neutral-800 rounded cursor-pointer transition-colors group">
-                <input type="checkbox" value="${p.name}" class="w-4 h-4 rounded text-yellow-600 bg-black border-neutral-600 focus:ring-yellow-500 focus:ring-offset-0">
-                <span class="text-xs font-medium text-neutral-300 group-hover:text-white">${p.name}</span>
-            </label>
-        `).join('');
+            pending.forEach(d => renderRow(d, pendingList, false));
+            sold.forEach(d => renderRow(d, soldList, true));
+        };
 
-        masterList.innerHTML = players.map(p => `
-            <div class="flex justify-between items-center bg-black p-3 rounded border border-neutral-800 hover:border-neutral-600 transition-colors">
-                <span class="text-sm font-bold text-white">${p.name}</span>
-                <div class="flex gap-2">
-                    <button onclick="editPlayer('${p.id}', '${p.name}')" class="text-neutral-500 hover:text-yellow-500 px-2 py-1">✎</button>
-                    <button onclick="removePlayer('${p.id}')" class="text-neutral-500 hover:text-red-500 px-2 py-1">✕</button>
-                </div>
-            </div>
-        `).join('');
-    };
-
-    window.processAndRenderDrops = (allDrops) => {
-        const pendingList = document.getElementById('pendingList');
-        const soldList = document.getElementById('soldList');
-        pendingList.innerHTML = ''; 
-        soldList.innerHTML = '';
-
-        const pending = allDrops.filter(d => !d.sold);
-        const sold = allDrops.filter(d => d.sold).sort((a, b) => (b.saleTimestamp || 0) - (a.saleTimestamp || 0));
-
-        if(pending.length === 0) pendingList.innerHTML = '<div class="text-neutral-600 text-center py-4 italic">Nenhum drop pendente.</div>';
-        pending.forEach(drop => renderRow(drop, pendingList, false));
-
-        if(sold.length === 0) soldList.innerHTML = '<div class="text-neutral-600 text-center py-4 italic">Histórico vazio.</div>';
-        sold.forEach(drop => renderRow(drop, soldList, true));
-    };
-
-    function renderRow(drop, container, isSold) {
-        const shareKk = isSold ? (drop.price / drop.players.length).toFixed(2) : 0;
-        const shareGold = isSold ? Math.floor((drop.price * 1000000) / drop.players.length) : 0;
-        const displayDate = isSold && drop.saleDate ? `Vendido: ${drop.saleDate}` : `Drop: ${drop.dropDate}`;
-
-        const html = `
-        <div class="bg-neutral-900 border border-neutral-800 hover:border-neutral-600 transition-colors rounded group animate-slide mb-1">
-            <div class="grid grid-cols-12 gap-2 p-4 items-center">
-                <div class="col-span-4 md:col-span-3">
-                    <div class="text-yellow-500 font-bold text-sm uppercase truncate">${drop.item}</div>
-                    <div class="text-[10px] text-neutral-500 font-mono mt-1">${displayDate}</div>
-                </div>
-                <div class="col-span-4 md:col-span-5 flex flex-wrap gap-1">
-                    ${drop.players.map(p => `<span class="px-2 py-0.5 bg-black border border-neutral-700 rounded text-[10px] text-neutral-300">${p}</span>`).join('')}
-                </div>
-                <div class="col-span-4 md:col-span-4 flex flex-col items-end gap-2">
-                    ${!isSold ? `
-                        <button onclick="markAsSold('${drop.id}')" class="bg-yellow-600/10 hover:bg-yellow-600 hover:text-black text-yellow-500 border border-yellow-600/50 px-3 py-1.5 rounded text-[10px] font-bold uppercase w-full md:w-auto">$ Vender</button>
-                        <button onclick="deleteDrop('${drop.id}')" class="text-[10px] text-neutral-600 hover:text-red-500 underline">excluir</button>
-                    ` : `
-                        <div class="text-right">
-                            <div class="text-green-400 font-bold text-sm">${drop.price}kk</div>
-                            <div class="text-[10px] text-neutral-500">Share: <span class="text-neutral-300">${shareKk}kk</span></div>
+        function renderRow(drop, container, isSold) {
+            const shareGold = isSold ? Math.floor((drop.price * 1000000) / drop.players.length) : 0;
+            const html = `
+                <div class="bg-neutral-900 border border-neutral-800 p-4 rounded mb-1 group">
+                    <div class="grid grid-cols-12 items-center">
+                        <div class="col-span-4 text-yellow-500 font-bold">${drop.item}</div>
+                        <div class="col-span-5 flex flex-wrap gap-1">
+                            ${drop.players.map(p => `<span class="bg-black px-1 text-[10px] border border-neutral-700">${p}</span>`).join('')}
                         </div>
-                    `}
-                </div>
-            </div>
-            ${isSold ? `
-            <div class="border-t border-neutral-800 bg-black/30 p-2 hidden group-hover:block transition-all">
-                <div class="grid grid-cols-1 gap-1">
-                     ${drop.players.map((p, idx) => {
-                        const cmd = `transfer ${shareGold} to ${p}`;
-                        const btnId = `btn-${drop.id}-${idx}`;
-                        return `
-                        <div class="flex justify-between items-center bg-black px-3 py-1 rounded border border-neutral-800">
-                            <code class="text-[10px] text-neutral-400 font-mono truncate select-all">${cmd}</code>
-                            <button id="${btnId}" onclick="copyTransfer('${cmd}', '${btnId}')" class="text-[9px] font-bold text-yellow-600 hover:text-white uppercase ml-2">COPY</button>
-                        </div>`;
-                     }).join('')}
-                </div>
-            </div>
-            ` : ''}
-        </div>`;
-        container.insertAdjacentHTML('beforeend', html);
-    }
-
-    window.switchTab = (type) => {
-        const pList = document.getElementById('pendingList');
-        const sList = document.getElementById('soldList');
-        const pTab = document.getElementById('tabPending');
-        const sTab = document.getElementById('tabSold');
-        if (type === 'pending') {
-            pList.classList.remove('hidden'); sList.classList.add('hidden');
-            pTab.classList.add('border-yellow-500', 'text-white', 'bg-neutral-900/50');
-            pTab.classList.remove('border-transparent', 'text-neutral-500');
-            sTab.classList.add('border-transparent', 'text-neutral-500');
-            sTab.classList.remove('border-yellow-500', 'text-white', 'bg-neutral-900/50');
-        } else {
-            sList.classList.remove('hidden'); pList.classList.add('hidden');
-            sTab.classList.add('border-yellow-500', 'text-white', 'bg-neutral-900/50');
-            sTab.classList.remove('border-transparent', 'text-neutral-500');
-            pTab.classList.add('border-transparent', 'text-neutral-500');
-            pTab.classList.remove('border-yellow-500', 'text-white', 'bg-neutral-900/50');
+                        <div class="col-span-3 text-right">
+                            ${!isSold ? 
+                                `<button onclick="window.markAsSold('${drop.id}')" class="text-yellow-500 border border-yellow-500 px-2 py-1 text-[10px]">VENDER</button>` : 
+                                `<span class="text-green-400 font-bold">${drop.price}kk</span>`
+                            }
+                        </div>
+                    </div>
+                    ${isSold ? `<div class="mt-2 hidden group-hover:block">
+                        ${drop.players.map((p, i) => `
+                            <div class="flex justify-between text-[10px] bg-black p-1 mb-1 border border-neutral-800">
+                                <span>transfer ${shareGold} to ${p}</span>
+                                <button id="b-${drop.id}-${i}" onclick="window.copyTransfer('transfer ${shareGold} to ${p}', 'b-${drop.id}-${i}')" class="text-yellow-500">COPY</button>
+                            </div>
+                        `).join('')}
+                    </div>` : ''}
+                </div>`;
+            container.insertAdjacentHTML('beforeend', html);
         }
-    };
-</script>
+
+        window.renderPlayers = (players) => {
+            const fList = document.getElementById('formPlayerList');
+            const mList = document.getElementById('masterPlayerList');
+            if (!fList || !mList) return;
+            fList.innerHTML = players.map(p => `<label class="flex gap-2 p-1"><input type="checkbox" value="${p.name}"> ${p.name}</label>`).join('');
+            mList.innerHTML = players.map(p => `<div class="flex justify-between bg-black p-2"><span>${p.name}</span><button onclick="window.removePlayer('${p.id}')">✕</button></div>`).join('');
+        };
+
+        window.switchTab = (type) => {
+            document.getElementById('pendingList').classList.toggle('hidden', type === 'sold');
+            document.getElementById('soldList').classList.toggle('hidden', type === 'pending');
+        };
+
+        // ESCUCHAS REAL-TIME
+        onSnapshot(collection(db, "players"), (s) => window.renderPlayers(s.docs.map(d => ({id:d.id, ...d.data()}))));
+        onSnapshot(query(collection(db, "drops"), orderBy("timestamp", "desc")), (s) => window.processAndRenderDrops(s.docs.map(d => ({id:d.id, ...d.data()}))));
+    </script>
+</body>
+</html>
